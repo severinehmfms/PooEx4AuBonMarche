@@ -1,0 +1,146 @@
+package fr.aubonmarche;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.Set;
+
+/**
+ * Fonctions plus génériques pas spécifiques aux avions
+ */
+public class Functions {
+
+	/**
+	 * Fonction qui va afficher le menu proposé à l'utilisateur (en paramètre)
+	 * @param menu (String[])
+	 * @return  la saisie de l'utilisateur (int)
+	 */
+	public static int ask_user_choice(Scanner scanner, String[] menu) {
+		//On récupère le tableau correspondant au menu en paramètre et on construit la chaine qui va bien
+		String menuStr = "\nMENU :";
+		for (int i = 0; i < menu.length; i++) {
+			menuStr += i + ": " + menu[i] + "\n";
+		}
+		
+		//On récupère la saisie de l'utilisateur entre 0 et la taille du menu
+		int choiceInt = Functions.input_int(scanner, menuStr, 0, menu.length);
+		return choiceInt;
+	}
+	
+	
+	/**
+	 * Surcharge de la méthode input_int pour ne pas rentrer de valeur minimum et maximum
+	 * @param prompt
+	 * @return
+	 */
+	public static int input_int(Scanner scanner, String prompt) {
+	    return input_int(scanner, prompt, Integer.MIN_VALUE, Integer.MAX_VALUE);
+	}
+
+	/**
+	 *  Surcharge de la méthode pour ne pas rentrer de valeur maximum
+	 * @param prompt
+	 * @param min_val
+	 * @return
+	 */
+	public static int input_int(Scanner scanner, String prompt, int min_val) {
+	    return input_int(scanner, prompt, min_val, Integer.MAX_VALUE);
+	}
+	
+	/**
+	 * Fonction générique pour faire saisir à l'utilisateur un int entre min_val et max_val
+	 * @param prompt
+	 * @param min_val
+	 * @param max_val
+	 * @return
+	 */
+	public static int input_int(Scanner scanner, String prompt, int min_val, int max_val) {
+		int input_int_user = 0;
+		boolean is_valid_input = false;
+	    while (!is_valid_input) {
+	    	System.out.println(prompt);
+	    	String input_user = scanner.nextLine();
+
+	    	if (! input_user.matches("\\d+")) {
+	        	System.out.println("ERREUR - Vous devez saisir un entier.");
+	        } else {
+	        	input_int_user = Integer.parseInt(input_user);
+
+	            if (input_int_user < min_val || input_int_user > max_val) {
+	            	System.out.println("ERREUR - La saisie doit être comprise entre " + min_val + " et " + max_val);
+	            } else {
+	            	is_valid_input = true;
+	            }
+	        }
+	    }
+		return input_int_user;
+	}
+
+	
+	/** 
+	 * Fonction qui permet de demander une saisie à l'utilisateur
+	 * prompt = Prompt qui demande à l'utilisateur de saisir 
+	 */
+	public static String input_string(Scanner scanner, String prompt) {
+		boolean is_input_ok = false;
+		String input_user = "";
+		while (!is_input_ok) {
+			System.out.println(prompt);
+			input_user = scanner.nextLine();
+			
+			if (input_user.trim().isEmpty()) {
+				System.out.println("ERREUR - La saisie ne peut pas être à vide");
+				is_input_ok = false;
+			}else {		
+				is_input_ok = true;
+			}
+		}
+		return input_user;
+	}
+
+	
+	/** 
+	 * Fonction qui permet de demander une saisie à l'utilisateur : Les attendus pour oui ou non sont stockés dans les ensembles yes_answers et no_answers
+	 * prompt = Prompt qui demande à l'utilisateur de saisir 
+	 */
+	public static boolean input_yes_no(Scanner scanner, String prompt) {
+		boolean is_input_ok = false;
+		
+		Set<String> yes_answers = new HashSet<>(Arrays.asList(
+			    "oui",
+			    "o",
+			    "yes",
+			    "y"
+			));
+		Set<String> no_answers = new HashSet<>(Arrays.asList(
+			    "non",
+			    "n",
+			    "no"
+			));
+		String input_user = "";
+		//Tant que la saisie n'est pas conforme à ce qui est attendu, on redemande à l'utilisateur
+		while (!is_input_ok) {
+			System.out.println(prompt);
+			input_user = scanner.nextLine();
+			//On enlève les espaces
+			input_user = input_user.trim();
+			//On met en minuscules
+			input_user = input_user.toLowerCase();
+			if (input_user.trim().isEmpty()) {
+				System.out.println("ERREUR - La saisie ne peut pas être à vide");
+				is_input_ok = false;
+			}else if ( (!yes_answers.contains(input_user.toLowerCase())) && (!no_answers.contains(input_user.toLowerCase())) ){
+				System.out.println("ERREUR - Saisie incorrecte ! ");
+				is_input_ok = false;
+			}else {		
+				is_input_ok = true;
+			}
+		}
+		//Si l'utilisateur a répondu oui, on renvoie vrai, sinon false
+		if (yes_answers.contains(input_user.toLowerCase())) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+}
