@@ -75,6 +75,7 @@ public class AuBonMarche {
 			
 			//On récupère le produit correspondant au choix de l'utilisateur
 			//FreshProduct selectedProduct = catalogue.get(choice - 1);
+			//getProduct(int productNumber) (dans Classe Product)
 			
 			//On demande à l'utilisateur le nombre de pièces/de kilos de ce produit qu'il souhaite acheter
 			

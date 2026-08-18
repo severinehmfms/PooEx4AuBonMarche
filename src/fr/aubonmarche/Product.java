@@ -78,7 +78,15 @@ public abstract class Product {
 	            (i + 1) + " - " + products.get(i)
 	        );
 		}	
-		
+	}
+	
+	/**
+	 * Fonction qui retourne le produit du numéro choisi par le client
+	 * @param productNumber
+	 * @return
+	 */
+	public static Product getProduct(int productNumber) {
+	    return products.get(productNumber - 1);
 	}
 		
 	protected abstract LocalDate calculateExpirationDate();
