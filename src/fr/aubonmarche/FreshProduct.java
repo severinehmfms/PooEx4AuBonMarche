@@ -15,6 +15,7 @@ public class FreshProduct extends Product implements Consumable{
 	protected String categoryProduct;
 	
 	private static final List<FreshProduct> products = new ArrayList<>();
+	protected static int nbProducts;
 	
 	/**
 	 * Constructeur du fruit sans les informations liées à la conservation des produits
@@ -29,6 +30,7 @@ public class FreshProduct extends Product implements Consumable{
 		
 		//On ajoute le produit frais à la liste
 		products.add(this);
+		nbProducts++;
 	}
 	
 	/**
@@ -46,10 +48,11 @@ public class FreshProduct extends Product implements Consumable{
 		
 		//On ajoute le produit frais à la liste
 		products.add(this);
+		nbProducts++;
 	}
 	
 	public String toString() {
-		return super.name;
+		return categoryProduct + " : " + super.name + " - Prix : " + super.unitPrice + " / " + super.unite;
 	}
 
 	
@@ -98,10 +101,21 @@ public class FreshProduct extends Product implements Consumable{
 		return 0;
 	}
 	
-	public void displayAllFreshProducts() {
-		for (FreshProduct product : products) {
+	/**
+	 * Fonction qui va afficher tous les produits
+	 */
+	public static void displayAllFreshProducts() {
+		/*for (FreshProduct product : products) {
 		    System.out.println(product);
-		}
+		}*/
+		
+		//Avec affichage du numéro pour simplifier la saisie du client
+		for (int i = 0; i < products.size(); i++) {
+	        System.out.println(
+	            (i + 1) + " - " + products.get(i)
+	        );
+		}	
+		
 	}
 
 	/**
@@ -115,7 +129,4 @@ public class FreshProduct extends Product implements Consumable{
 	public void setCategoryProduct(String categoryProduct) {
 		this.categoryProduct = categoryProduct;
 	}
-	
-	
-
 }

@@ -5,14 +5,12 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Classe qui représente l'application AuBonMarche
+ * Classe qui représente l'application AuBonMarche pour l'achat de fruits et légumes par un client
  */
 
 
 public class AuBonMarche {
 	
-	
-
 	//On initialise le scanner
 	private static Scanner scanner = new Scanner(System.in);
 	
@@ -20,6 +18,9 @@ public class AuBonMarche {
 		
 		//On crée le client (en dur pour l'exercice actuel)
 		Customer myClient = new Customer("Dupont","Pierre");
+		
+		//On initialise les produits et leur stock, et dates péremption etc..
+		initialisationProducts();
 		
 		String[] menu = {
 			    "Quitter le programme",
@@ -37,6 +38,7 @@ public class AuBonMarche {
 				case 1:				
 					//Choix des produits
 					System.out.println("Choix des produits");
+					choiceProducts();
 					break;
 				case 2:
 					//Affichage du panier
@@ -60,12 +62,25 @@ public class AuBonMarche {
 		scanner.close();
 	}
 	
-	public static void displayProducts() {
-		//TODO Fonction qui affiche les produits disponibles, quand l'utilisateur a choisi cette option
-		//for (Product product : products) {
-		  //  System.out.println(product);
-		//}
-		//Récupération de la saisie des produits choisis?
+	public static void choiceProducts() {
+		
+		
+		//Tant que l'utilisateur veut continuer de choisir des produits, on continue de lui proposer
+		
+			//On affiche les produits disponibles
+			FreshProduct.displayAllFreshProducts();
+		
+			//On récupère la saisie de l'utilisateur
+			int choice =  Functions.input_int(scanner, "Merci de rentrer le numéro du produit choisi", 1, FreshProduct.nbProducts);
+			
+			//On récupère le produit correspondant au choix de l'utilisateur
+			//FreshProduct selectedProduct = catalogue.get(choice - 1);
+			
+			//On demande à l'utilisateur le nombre de pièces/de kilos de ce produit qu'il souhaite acheter
+			
+			//On ajoute ce produit au panier,
+			
+		
 	}
 	
 	public static void displayCart() {
@@ -79,7 +94,6 @@ public class AuBonMarche {
 	public static void displayTicket() {
 		//TODO Fonction qui affiche le ticket de caisse
 	}
-	
 	
 	public static void initialisationProducts() {
 		//Product[] products = {
