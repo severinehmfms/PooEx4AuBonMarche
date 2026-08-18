@@ -1,12 +1,17 @@
 package fr.aubonmarche;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe abstraite Product
  */
 
 public abstract class Product {
+	//Constantes pour les unités
+	public static String UNITE_KG = "kg";
+	public static String UNITE_PIECE = "pièce";
 	
 	protected String name;
 	protected double unitPrice;
@@ -14,6 +19,10 @@ public abstract class Product {
 	protected double stockQuantity;
 	protected LocalDate pickingDate;	//Date de cueillette
 	protected int shelfLifeDays;		//Durée maximale de conservation en jours
+	
+	//Liste de produits et le nombre de produits
+	protected static final List<Product> products = new ArrayList<>();
+	protected static int nbProducts;
 	
 	/**
 	 * Constructeur du produit sans les informations liées à la conservation des produits
@@ -46,11 +55,34 @@ public abstract class Product {
 		this.pickingDate = pickingDate;
 		this.shelfLifeDays = shelfLifeDays;
 	}
+	
+	/**
+	 * Méthode toString de base
+	 */
+	public String toString() {
+		return this.name + " - Prix : " + this.unitPrice + " / " + this.unite;
+	}
+
+	
+	/**
+	 * Fonction qui va afficher tous les produits
+	 */
+	public static void displayAllFreshProducts() {
+		/*for (FreshProduct product : products) {
+		    System.out.println(product);
+		}*/
+		
+		//Avec affichage du numéro pour simplifier la saisie du client
+		for (int i = 0; i < products.size(); i++) {
+	        System.out.println(
+	            (i + 1) + " - " + products.get(i)
+	        );
+		}	
+		
+	}
 		
 	protected abstract LocalDate calculateExpirationDate();
 	
 	protected abstract void updateStock();
 	
-	
-
 }

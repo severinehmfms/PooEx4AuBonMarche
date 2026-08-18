@@ -4,19 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FreshProduct extends Product implements Consumable{
-	
-	public static String UNITE_KG = "kg";
-	public static String UNITE_PIECE = "pièce";
-	
-	public static String CATEGORY_FRUIT = "Fruit";
-	public static String CATEGORY_VEGETABLE = "Légume";
-	
-	protected String categoryProduct;
-	
-	private static final List<FreshProduct> products = new ArrayList<>();
-	protected static int nbProducts;
-	
+public class Fruit extends Product implements Consumable{
+		
 	/**
 	 * Constructeur du fruit sans les informations liées à la conservation des produits
 	 * @param name
@@ -24,13 +13,12 @@ public class FreshProduct extends Product implements Consumable{
 	 * @param unite
 	 * @param stockQuantity
 	 */
-	public FreshProduct(String name, double unitPrice, String unite, double stockQuantity, String categoryProduct) {
+	public Fruit(String name, double unitPrice, String unite, double stockQuantity) {
 		super(name, unitPrice, unite, stockQuantity);
-		this.categoryProduct = categoryProduct;
 		
-		//On ajoute le produit frais à la liste
-		products.add(this);
-		nbProducts++;
+		//On ajoute le fruit à la liste des produits
+		super.products.add(this);
+		super.nbProducts++;
 	}
 	
 	/**
@@ -42,19 +30,21 @@ public class FreshProduct extends Product implements Consumable{
 	 * @param pickingDate
 	 * @param shelfLifeDays
 	 */
-	public FreshProduct(String name, double unitPrice, String unite, double stockQuantity, String categoryProduct, LocalDate pickingDate, int shelfLifeDays) {
+	public Fruit(String name, double unitPrice, String unite, double stockQuantity, LocalDate pickingDate, int shelfLifeDays) {
 		super(name, unitPrice, unite, stockQuantity, pickingDate, shelfLifeDays);
-		this.categoryProduct = categoryProduct;
 		
-		//On ajoute le produit frais à la liste
-		products.add(this);
-		nbProducts++;
+		//On ajoute le fruit à la liste des produits
+		super.products.add(this);
+		super.nbProducts++;
 	}
 	
+	/**
+	 * On redéfinit la méthode toString
+	 */
+	@Override
 	public String toString() {
-		return categoryProduct + " : " + super.name + " - Prix : " + super.unitPrice + " / " + super.unite;
+		return "Fruit : " + super.toString();
 	}
-
 	
 	/**
 	 * On redéfinit la méthode calculateExpirationDate de la classe mère Product
@@ -101,32 +91,5 @@ public class FreshProduct extends Product implements Consumable{
 		return 0;
 	}
 	
-	/**
-	 * Fonction qui va afficher tous les produits
-	 */
-	public static void displayAllFreshProducts() {
-		/*for (FreshProduct product : products) {
-		    System.out.println(product);
-		}*/
-		
-		//Avec affichage du numéro pour simplifier la saisie du client
-		for (int i = 0; i < products.size(); i++) {
-	        System.out.println(
-	            (i + 1) + " - " + products.get(i)
-	        );
-		}	
-		
-	}
-
-	/**
-	 * Getters et Setters
-	 * 
-	 */
-	public String getCategoryProduct() {
-		return categoryProduct;
-	}
-
-	public void setCategoryProduct(String categoryProduct) {
-		this.categoryProduct = categoryProduct;
-	}
+	
 }
