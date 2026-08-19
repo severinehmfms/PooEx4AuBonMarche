@@ -23,21 +23,6 @@ public class Cart {
 	    IN_PROGRESS,
 	    VALIDATED
 	}
-	/*//Finalement pas besoin de la description !
-	public enum CartStatus {
-		IN_PROGRESS("En cours"), VALIDATED("Validé");
-		
-		private final String description;
-
-		CartStatus(String description) {
-			this.description = description;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-	}*/
-	
 	
 	/**
 	 * Constructeur
@@ -119,6 +104,7 @@ public class Cart {
 		
 		System.out.println("----------------------------------------------------------------------------------------------------");
 		String titleLine = String.format("%-20s %-20s %-20s %-20s %-20s %n", "Produit", "Nom", "Prix", "Quantité", "Sous total");
+		System.out.println(titleLine);
 		for (CartItem item : items) {
 			String lineCartStr = String.format("%-20s %-20s %-20s %-20s %-20s %n",
 					(item.getProduct() instanceof Fruit ? "Fruit": "Légume"),

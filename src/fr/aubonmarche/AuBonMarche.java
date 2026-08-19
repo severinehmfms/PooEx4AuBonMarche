@@ -111,7 +111,7 @@ public class AuBonMarche {
 				String promptQuantity = "Combien de "  + chooseProduct.getUnite() + "s de " + chooseProduct.getName() + " voulez vous acheter ? ";
 				double quantityChoose;
 				//Si c'est un produit à l'unité on doit saisir un int qu'on convertit ensuite en double
-				if (chooseProduct.getUnite().equals(chooseProduct.UNITE_PIECE)) {
+				if (chooseProduct.getUnite().equals(Product.UNITE_PIECE)) {
 					int quantityChooseInt =  Functions.input_int(scanner, promptQuantity +" (Maximum " + String.valueOf((int) stockDisponible) + ")", 1, (int) stockDisponible);
 					quantityChoose = quantityChooseInt;
 				}else {
