@@ -16,7 +16,7 @@ public class Functions {
 	 */
 	public static int ask_user_choice(Scanner scanner, String[] menu) {
 		//On récupère le tableau correspondant au menu en paramètre et on construit la chaine qui va bien
-		String menuStr = "\nMENU :";
+		String menuStr = "\nMENU :\n";
 		for (int i = 0; i < menu.length; i++) {
 			menuStr += i + ": " + menu[i] + "\n";
 		}
@@ -73,6 +73,39 @@ public class Functions {
 	        }
 	    }
 		return input_int_user;
+	}
+	
+	/**
+	 * Fonction générique pour faire saisir à l'utilisateur un int entre min_val et max_val
+	 * @param prompt
+	 * @param min_val
+	 * @param max_val
+	 * @return
+	 */
+	public static double input_double(Scanner scanner, String prompt, double min_val, double max_val) {
+		double input_double_user = 0;
+		boolean is_valid_input = false;
+	    while (!is_valid_input) {
+	    	System.out.println(prompt);
+	    	String input_user = scanner.nextLine();
+
+	    	//On remplace les virgules par des points
+	    	input_user = input_user.trim().replace(',', '.');
+
+	    	//On vérifie si le format de saisie correspond à un double
+	    	if (! input_user.matches("\\d+(\\.\\d+)?")) {
+	    		System.out.println("ERREUR - Vous devez saisir un nombre décimal.");
+	    	} else {	    	
+	        	input_double_user = Double.parseDouble(input_user);
+
+	            if (input_double_user < min_val || input_double_user > max_val) {
+	            	System.out.println("ERREUR - La saisie doit être comprise entre " + min_val + " et " + max_val);
+	            } else {
+	            	is_valid_input = true;
+	            }
+	        }
+	    }
+		return input_double_user;
 	}
 
 	

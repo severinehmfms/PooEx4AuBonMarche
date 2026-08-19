@@ -17,8 +17,7 @@ public class Fruit extends Product implements Consumable{
 		super(name, unitPrice, unite, stockQuantity);
 		
 		//On ajoute le fruit à la liste des produits
-		super.products.add(this);
-		super.nbProducts++;
+		super.addProductToList(this);
 	}
 	
 	/**
@@ -30,12 +29,13 @@ public class Fruit extends Product implements Consumable{
 	 * @param pickingDate
 	 * @param shelfLifeDays
 	 */
-	public Fruit(String name, double unitPrice, String unite, double stockQuantity, LocalDate pickingDate, int shelfLifeDays) {
+	public Fruit(String name, double unitPrice, String unite, int stockQuantity, LocalDate pickingDate, int shelfLifeDays) {
 		super(name, unitPrice, unite, stockQuantity, pickingDate, shelfLifeDays);
 		
 		//On ajoute le fruit à la liste des produits
-		super.products.add(this);
-		super.nbProducts++;
+		super.addProductToList(this);
+		//super.products.add(this);
+		//super.nbProducts++;
 	}
 	
 	/**
@@ -57,11 +57,12 @@ public class Fruit extends Product implements Consumable{
 
 	/**
 	 * On redéfinit la méthode updateStock de la classe mère Product
+	 * On met à jour le stock en déduisant la quantité commandée de la quantité existante
 	 */
 	@Override
-	public void updateStock() {
-		// TODO Auto-generated method stub
-		
+	public void updateStock(double orderedQuantity) {
+		double newStock = getStockQuantity() - orderedQuantity;
+		setStockQuantity(newStock);
 	}
 
 	/**
@@ -69,7 +70,8 @@ public class Fruit extends Product implements Consumable{
 	 */
 	@Override
 	public boolean isRipe() {
-		// TODO Auto-generated method stub
+		//TODO Pour un fruit on part du principe que le lendemain de la cueillette il est mur...
+		
 		return false;
 	}
 

@@ -17,8 +17,9 @@ public class Vegetable extends Product implements Consumable{
 		super(name, unitPrice, unite, stockQuantity);
 		
 		//On ajoute le légume à la liste des produits
-		super.products.add(this);
-		super.nbProducts++;
+		super.addProductToList(this);
+		//super.products.add(this);
+		//super.nbProducts++;
 	}
 	
 	/**
@@ -34,8 +35,9 @@ public class Vegetable extends Product implements Consumable{
 		super(name, unitPrice, unite, stockQuantity, pickingDate, shelfLifeDays);
 		
 		//On ajoute le légume à la liste des produits
-		super.products.add(this);
-		super.nbProducts++;
+		super.addProductToList(this);
+		//super.products.add(this);
+		//super.nbProducts++;
 	}
 	
 	/**
@@ -57,20 +59,21 @@ public class Vegetable extends Product implements Consumable{
 
 	/**
 	 * On redéfinit la méthode updateStock de la classe mère Product
+	 * On met à jour le stock en déduisant la quantité commandée de la quantité existante
 	 */
 	@Override
-	public void updateStock() {
-		// TODO Auto-generated method stub
-		
+	public void updateStock(double orderedQuantity) {
+		double newStock = getStockQuantity() - orderedQuantity;
+		setStockQuantity(newStock);
 	}
 
 	/**
 	 * On redéfinit la méthode isRipe de l'interface Consumable implémentée
+	 * On part du principe que pour un légume, c'est forcément mur... (ça se discute :-p, c'est pour l'exercice!)
 	 */
 	@Override
 	public boolean isRipe() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**

@@ -13,16 +13,15 @@ public abstract class Product {
 	public static String UNITE_KG = "kg";
 	public static String UNITE_PIECE = "pièce";
 	
-	protected String name;
-	protected double unitPrice;
-	protected String unite;
-	protected double stockQuantity;
-	protected LocalDate pickingDate;	//Date de cueillette
-	protected int shelfLifeDays;		//Durée maximale de conservation en jours
+	private String name;
+	private double unitPrice;
+	private String unite;
+	private double stockQuantity;
+	private LocalDate pickingDate;	//Date de cueillette
+	private int shelfLifeDays;		//Durée maximale de conservation en jours
 	
-	//Liste de produits et le nombre de produits
-	protected static final List<Product> products = new ArrayList<>();
-	protected static int nbProducts;
+	//Catalogue de produits
+	private static final List<Product> catalogProducts = new ArrayList<>();
 	
 	/**
 	 * Constructeur du produit sans les informations liées à la conservation des produits
@@ -54,7 +53,11 @@ public abstract class Product {
 		this.stockQuantity = stockQuantity;
 		this.pickingDate = pickingDate;
 		this.shelfLifeDays = shelfLifeDays;
-	}
+	}	
+
+	protected abstract LocalDate calculateExpirationDate();
+	
+	protected abstract void updateStock(double orderedQuantity);
 	
 	/**
 	 * Méthode toString de base
@@ -62,15 +65,15 @@ public abstract class Product {
 	public String toString() {
 		return this.name + " - Prix : " + this.unitPrice + " / " + this.unite;
 	}
-
 	
 	/**
 	 * Fonction qui va afficher tous les produits
 	 */
+	/*
 	public static void displayAllFreshProducts() {
-		/*for (FreshProduct product : products) {
-		    System.out.println(product);
-		}*/
+		//for (FreshProduct product : products) {
+		//    System.out.println(product);
+		//}
 		
 		//Avec affichage du numéro pour simplifier la saisie du client
 		for (int i = 0; i < products.size(); i++) {
@@ -78,19 +81,81 @@ public abstract class Product {
 	            (i + 1) + " - " + products.get(i)
 	        );
 		}	
+	}*/
+	
+	/**
+	 * Fonction qui ajoute un Product à la liste des produits (en attribut)
+	 * @param product
+	 */
+	public static void addProductToList(Product product) {
+		catalogProducts.add(product);
 	}
 	
 	/**
-	 * Fonction qui retourne le produit du numéro choisi par le client
+	 * Fonction qui retourne le produit correspondant au numéro choisi par le client
 	 * @param productNumber
 	 * @return
 	 */
-	public static Product getProduct(int productNumber) {
-	    return products.get(productNumber - 1);
+	public static Product getProductListByNumber(int productNumber) {
+	    return catalogProducts.get(productNumber - 1);
 	}
-		
-	protected abstract LocalDate calculateExpirationDate();
 	
-	protected abstract void updateStock();
+	/**
+	 * Getters et Setters des attributs 
+	 */
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public double getUnitPrice() {
+		return unitPrice;
+	}
+
+	public void setUnitPrice(double unitPrice) {
+		this.unitPrice = unitPrice;
+	}
+
+	public String getUnite() {
+		return unite;
+	}
+
+	public void setUnite(String unite) {
+		this.unite = unite;
+	}
+
+	public double getStockQuantity() {
+		return stockQuantity;
+	}
+
+	public void setStockQuantity(double stockQuantity) {
+		this.stockQuantity = stockQuantity;
+	}
+
+	public LocalDate getPickingDate() {
+		return pickingDate;
+	}
+
+	public void setPickingDate(LocalDate pickingDate) {
+		this.pickingDate = pickingDate;
+	}
+
+	public int getShelfLifeDays() {
+		return shelfLifeDays;
+	}
+
+	public void setShelfLifeDays(int shelfLifeDays) {
+		this.shelfLifeDays = shelfLifeDays;
+	}
+
+	public static List<Product> getProducts() {
+		return catalogProducts;
+	}
+	
+	
 	
 }

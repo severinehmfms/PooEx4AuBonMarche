@@ -8,7 +8,6 @@ import java.util.Scanner;
  * Classe qui représente l'application AuBonMarche pour l'achat de fruits et légumes par un client
  */
 
-
 public class AuBonMarche {
 	
 	//On initialise le scanner
@@ -19,15 +18,18 @@ public class AuBonMarche {
 		//On crée le client (en dur pour l'exercice actuel)
 		Customer myClient = new Customer("Dupont","Pierre");
 		
+		//On crée le panier correspondant à cet utilisateur, pour cette journée (pour l'exercice actuel on ne va pas plus loin dans la gestion de clients)
+		Cart myCart = new Cart(myClient, LocalDate.now(), Cart.CartStatus.IN_PROGRESS);
+		
 		//On initialise les produits et leur stock, et dates péremption etc..
 		initialisationProducts();
 		
 		String[] menu = {
 			    "Quitter le programme",
-			    "Choix des produits",
-			    "Affichage du panier",
-			    "Validation du panier et commande",
-			    "Affichage du ticket de caisse après la commande"
+			    "Commander des produits",
+			    "Affichage de mon panier / de ma commande",
+			    "Validation de mon panier pour passer la commande",
+			    "Affichage des produits en stock"
 			};
 		
 		int choice_user = -1;
@@ -37,21 +39,35 @@ public class AuBonMarche {
 			switch(choice_user) {
 				case 1:				
 					//Choix des produits
-					System.out.println("Choix des produits");
-					choiceProducts();
+					if (myCart.getStatus().equals(Cart.CartStatus.VALIDATED)) {
+						System.out.println("ERREUR - La commande a été validée, il n'est plus possible de rajouter des produits");
+					}else {
+						choiceProducts(myCart);
+					}
 					break;
 				case 2:
-					//Affichage du panier
-					System.out.println("Affichage du panier");
+					if (myCart.getStatus().equals(Cart.CartStatus.VALIDATED)) {
+						System.out.println("Affichage de ma commande");
+					}else {
+						System.out.println("Affichage du panier");
+					}
+					myCart.displayCart();
 					break;
 				case 3:	
-					//Validation du panier et commande
-					System.out.println("Validation du panier et commande");
+					if (myCart.getStatus().equals(Cart.CartStatus.VALIDATED)) {
+						System.out.println("ERREUR - La commande a déjà été validée, il n'est pas possible de la valider plusieurs fois");
+					}else {
+						//Validation du panier et commande
+						myCart.validCart();
+						System.out.println("Votre commande a bien été effectuée. Le stock a été mis à jour. Voici votre ticquet de caisse : ");
+						//Affichage du ticket de caisse après la commande
+						myCart.displayTicket();
+					}
 					break;
-				case 4:
-					//Affichage du ticket de caisse après la commande
-					System.out.println("Affichage du ticket de caisse après la commande");
-					break;
+				case 4:	
+					//Affichage des produits en stock
+					displayProductsStock(Fruit.getProducts());
+					break;					
 				case 0:
 					System.out.println("Au-revoir et à bientôt !");
 					break;
@@ -62,40 +78,79 @@ public class AuBonMarche {
 		scanner.close();
 	}
 	
-	public static void choiceProducts() {
+	
+	/**
+	 * Fonction qui gère l'interaction avec l'utilisateur pour le choix des produits et l'ajout au panier
+	 * @param myCart
+	 */
+	public static void choiceProducts(Cart myCart) {
+		System.out.println("Liste des produits disponibles");
+		boolean choice_continue = true;
 		
-		
-		//Tant que l'utilisateur veut continuer de choisir des produits, on continue de lui proposer
-		
-			//On affiche les produits disponibles
-			Fruit.displayAllFreshProducts();
-		
+		while (choice_continue) {
+			//Fruit.displayAllFreshProducts();
+			//On récupère la liste des produits et on l'affiche (je trouve que c'est plus cohérent que de faire l'affichage correspondant au bon marché dans la classe produit)
+			displayProductsList(Fruit.getProducts());
+			
 			//On récupère la saisie de l'utilisateur
-			int choice =  Functions.input_int(scanner, "Merci de rentrer le numéro du produit choisi", 1, Fruit.nbProducts);
+			int numProductChoose =  Functions.input_int(scanner, "Merci de rentrer le numéro du produit choisi", 1, Fruit.getProducts().size()+1);
 			
 			//On récupère le produit correspondant au choix de l'utilisateur
-			//FreshProduct selectedProduct = catalogue.get(choice - 1);
-			//getProduct(int productNumber) (dans Classe Product)
+			Product chooseProduct = Product.getProductListByNumber(numProductChoose);
 			
-			//On demande à l'utilisateur le nombre de pièces/de kilos de ce produit qu'il souhaite acheter
+			//On demande à l'utilisateur la quantité d'unités du produit qu'il souhaite acheté
+			System.out.println();
+			String promptQuantity = "Combien de "  + chooseProduct.getUnite() + "s de " + chooseProduct.getName() + " voulez vous acheter ? (Maximum " + chooseProduct.getStockQuantity() + ")";
 			
-			//On ajoute ce produit au panier,
+			double quantityChoose;
+			//Si c'est un produit à l'unité on doit saisir un int qu'on convertit ensuite en double
+			if (chooseProduct.getUnite().equals(chooseProduct.UNITE_PIECE)) {
+				int quantityChooseInt =  Functions.input_int(scanner, promptQuantity, 1, (int) chooseProduct.getStockQuantity());
+				quantityChoose = quantityChooseInt;
+			}else {
+				//Si c'est un produit au kg on doit saisir un double entre 0.1 et le stock de ce produit
+				quantityChoose =  Functions.input_double(scanner, promptQuantity, 0.1, chooseProduct.getStockQuantity());
+			}
 			
+			//On ajoute ce produit au panier
+			//TODO Gérer le fait de ne pas pouvoir choisir un produit déjà dans le panier...ou sinon y'aura problème de stock...
+			//Ou alors je dois gérer mon stock au moment de l'ajout au panier..?
+			myCart.addProductToCart(chooseProduct, quantityChoose);
+			
+			//On affiche le panier
+			myCart.displayCart();
+			
+			//On demande à l'utilisateur s'il souhaite continuer ses achats
+			choice_continue = Functions.input_yes_no(scanner, "Voulez vous continuer vos achats? oui/non ");
+		}	
 		
 	}
 	
-	public static void displayCart() {
-		//TODO Fonction qui affiche le panier
+	/**
+	 * Fonction qui affiche la liste des produits passée en paramètres, pour saisie utilisateur
+	 * @param products
+	 */
+	public static void displayProductsList(List<Product> products) {
+		//Avec affichage du numéro pour simplifier la saisie du client
+		for (int i = 0; i < products.size(); i++) {
+	        System.out.println( (i + 1) + " - " + products.get(i) );
+		}	
 	}
 	
-	public static void validateCart() {
-		//TODO Fonction qui valide le panier et passe la commande (met à jour le stock!)
+	/**
+	 * Fonction qui affiche la liste des produits et leur stock
+	 * @param products
+	 */
+	public static void displayProductsStock(List<Product> products) {
+				
+		for (Product product : products) {			
+			System.out.println( product.getName() + " - " + product.getStockQuantity());
+		}
 	}
 	
-	public static void displayTicket() {
-		//TODO Fonction qui affiche le ticket de caisse
-	}
-	
+	/**
+	 * Fonction qui initialise les produits du catalogue
+	 */
 	public static void initialisationProducts() {
 		new Fruit("Clémentine", 		2.90, Fruit.UNITE_KG, 	6, 	LocalDate.now().minusDays(3),   7);
 	    new Fruit("Datte",       	7.00, Fruit.UNITE_KG, 		4, 	LocalDate.now().minusDays(2),	7);
