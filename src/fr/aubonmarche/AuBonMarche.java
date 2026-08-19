@@ -1,6 +1,7 @@
 package fr.aubonmarche;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,6 +13,10 @@ public class AuBonMarche {
 	
 	//On initialise le scanner
 	private static Scanner scanner = new Scanner(System.in);
+	
+	//Format date français
+	private static final DateTimeFormatter FRENCH_DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
 	
 	public static void main(String[] args){		
 		
@@ -29,7 +34,8 @@ public class AuBonMarche {
 			    "Commander des produits",
 			    "Affichage de mon panier / de ma commande",
 			    "Validation de mon panier pour passer la commande",
-			    "Affichage des produits en stock"
+			    "Affichage des produits en stock",
+			    "Affichage des produits qui seront périmés à une date cible"
 			};
 		
 		int choice_user = -1;
@@ -67,7 +73,11 @@ public class AuBonMarche {
 				case 4:	
 					//Affichage des produits en stock
 					displayProductsStock(Fruit.getProducts());
-					break;					
+					break;	
+				case 5:	
+					//Affichage des produits qui seront périmés à une date cible
+					displayProductsPerimesDateCible();
+					break;		
 				case 0:
 					System.out.println("Au-revoir et à bientôt !");
 					break;
@@ -181,6 +191,35 @@ public class AuBonMarche {
 	    new Vegetable("Potiron",    		2.50, Fruit.UNITE_PIECE, 6, LocalDate.now().minusDays(5),	50);
 	    new Vegetable("Radis noir", 		5.00, Fruit.UNITE_PIECE, 10,LocalDate.now().minusDays(1),	5);
 	    new Vegetable("Salsifis",   		2.50, Fruit.UNITE_KG, 	3, 	LocalDate.now().minusDays(3),	10);
+	}
+	
+	/**
+	 * Fonction qui va afficher les produits périmés à une date cible qui sera saisie par l'utilisateur
+	 */
+	public static void displayProductsPerimesDateCible() {
+		//On demande à l'utilisateur de saisir une date
+		LocalDate dateCible = Functions.input_date_fr(scanner, "Merci de saisir une date au format dd/MM/yyyy");
+		System.out.println("Produits qui seront périmés à la date du " + dateCible.format(FRENCH_DATE_FORMAT) + " : ");
+		System.out.print(String.format("%-20s %-20s %-20s %-20s %n", "Produit", "Nom", "Quantité", "Nombre de jours restants avant péremption"));
+		for (Product product : Product.getProducts()) {
+			
+			//La classe Product n'implémente pas la méthode isExpired, donc ça ne fonctionne pas, il faut que je vérifie que mon produit
+			//est une instance de Consumable, et alors je peux créer une instance de l'objet Consumable qui appellera ma méthode isExpired
+			if (product instanceof Consumable) {
+		        Consumable consumable = (Consumable) product;
+		        if (consumable.isExpired(dateCible) ) {  //product.calculateExpirationDate()
+					//System.out.print( product.getName() + " : " + product.getStockQuantity() + " " + product.getUnite());
+					//System.out.println( "Aujourd'hui, il reste encore " + consumable.daysRemainingBeforeExpiration(LocalDate.now()) + " jours avant la péremption ");
+		        	String lineCartStr = String.format("%-20s %-20s %-20s %-20s %n",
+							(product instanceof Fruit ? "Fruit": "Légume"),
+							product.getName(),
+							product.getStockQuantity() + " " + product.getUnite(),
+							consumable.daysRemainingBeforeExpiration(LocalDate.now())
+							);
+					System.out.print(lineCartStr);
+		        }
+			}			
+		}
 	}
 		
 }

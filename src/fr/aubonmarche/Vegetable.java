@@ -78,10 +78,9 @@ public class Vegetable extends Product implements Consumable{
 	/**
 	 * On redéfinit la méthode isExpired de l'interface Consumable implémentée
 	 */
-	@Override
-	public boolean isExpired(LocalDate dateVerification) {
-		//Je regarde si ma date d'expiration est avant la date du jour
-		if (calculateExpirationDate().isBefore(LocalDate.now())) {
+	public boolean isExpired(LocalDate dateCible) {
+		//Je regarde si ma date d'expiration est avant la date passée en paramètre
+		if (calculateExpirationDate().isBefore(dateCible)) {
 			return true;
 		}
 		return false;
@@ -91,11 +90,11 @@ public class Vegetable extends Product implements Consumable{
 	 * On redéfinit la méthode daysRemainingBeforeExpiration de l'interface Consumable implémentée
 	 */
 	@Override
-	public long daysRemainingBeforeExpiration(LocalDate dateVerification) {
-		//On retourne le nombre de jours entre aujourd'hui et la date calculée de péremption
+	public long daysRemainingBeforeExpiration(LocalDate dateCible) {
+		//On retourne le nombre de jours entre la date passée en paramètre et la date calculée de péremption
 		return ChronoUnit.DAYS.between(
-		        LocalDate.now(),
+				dateCible,
 		        calculateExpirationDate()
 		    );
-	}	
+	}
 }

@@ -1,4 +1,8 @@
 package fr.aubonmarche;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -107,6 +111,33 @@ public class Functions {
 	    }
 		return input_double_user;
 	}
+	
+	public static LocalDate input_date_fr(Scanner scanner, String prompt) {
+		LocalDate date = null;
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
+	    boolean is_valid_input = false;
+	    while (!is_valid_input) {
+	        System.out.println(prompt);
+	        String input_user = scanner.nextLine();
+
+	        input_user = input_user.trim();
+
+	        // Vérification du format dd/MM/yyyy
+	        if (!input_user.matches("\\d{2}/\\d{2}/\\d{4}")) {
+	            System.out.println("ERREUR - La saisie doit être une date au format dd/MM/yyyy.");
+	        }else {
+	        	try {
+	        		date = LocalDate.parse(input_user, formatter);
+		        	is_valid_input = true;
+	            } catch (DateTimeParseException e) {
+	                System.out.println("ERREUR - Date inexistante. Veuillez saisir une date existante.");
+	            }
+	        }
+	    }
+        return date;
+	}
+	
+	
 
 	
 	/** 
