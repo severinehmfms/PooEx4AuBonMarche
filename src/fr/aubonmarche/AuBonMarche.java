@@ -98,30 +98,38 @@ public class AuBonMarche {
 			//On récupère le produit correspondant au choix de l'utilisateur
 			Product chooseProduct = Product.getProductListByNumber(numProductChoose);
 			
-			//On demande à l'utilisateur la quantité d'unités du produit qu'il souhaite acheté
-			System.out.println();
-			String promptQuantity = "Combien de "  + chooseProduct.getUnite() + "s de " + chooseProduct.getName() + " voulez vous acheter ? (Maximum " + chooseProduct.getStockQuantity() + ")";
-			
-			double quantityChoose;
-			//Si c'est un produit à l'unité on doit saisir un int qu'on convertit ensuite en double
-			if (chooseProduct.getUnite().equals(chooseProduct.UNITE_PIECE)) {
-				int quantityChooseInt =  Functions.input_int(scanner, promptQuantity, 1, (int) chooseProduct.getStockQuantity());
-				quantityChoose = quantityChooseInt;
-			}else {
-				//Si c'est un produit au kg on doit saisir un double entre 0.1 et le stock de ce produit
-				quantityChoose =  Functions.input_double(scanner, promptQuantity, 0.1, chooseProduct.getStockQuantity());
+			//On calcule le stock disponible
+			double stockDisponible = chooseProduct.getStockQuantity();
+			//Si ce produit existe déjà dans le panier, on calcule le nouveau stock disponible
+			CartItem item = myCart.getItem(chooseProduct);
+			if (item != null) {
+			    stockDisponible = stockDisponible - item.getQuantity();
 			}
 			
-			//On ajoute ce produit au panier
-			//TODO Gérer le fait de ne pas pouvoir choisir un produit déjà dans le panier...ou sinon y'aura problème de stock...
-			//Ou alors je dois gérer mon stock au moment de l'ajout au panier..?
-			myCart.addProductToCart(chooseProduct, quantityChoose);
-			
-			//On affiche le panier
-			myCart.displayCart();
-			
-			//On demande à l'utilisateur s'il souhaite continuer ses achats
-			choice_continue = Functions.input_yes_no(scanner, "Voulez vous continuer vos achats? oui/non ");
+			if (stockDisponible > 0) {
+				//On demande à l'utilisateur la quantité d'unités du produit qu'il souhaite acheter
+				String promptQuantity = "Combien de "  + chooseProduct.getUnite() + "s de " + chooseProduct.getName() + " voulez vous acheter ? ";
+				double quantityChoose;
+				//Si c'est un produit à l'unité on doit saisir un int qu'on convertit ensuite en double
+				if (chooseProduct.getUnite().equals(chooseProduct.UNITE_PIECE)) {
+					int quantityChooseInt =  Functions.input_int(scanner, promptQuantity +" (Maximum " + String.valueOf((int) stockDisponible) + ")", 1, (int) stockDisponible);
+					quantityChoose = quantityChooseInt;
+				}else {
+					//Si c'est un produit au kg on doit saisir un double entre 0.1 et le stock de ce produit
+					quantityChoose =  Functions.input_double(scanner, promptQuantity +" (Maximum " + String.valueOf(stockDisponible) + ")", 0.1, stockDisponible);
+				}
+				
+				//On ajoute ce produit au panier
+				myCart.addProductToCart(chooseProduct, quantityChoose);
+				
+				//On affiche le panier
+				myCart.displayCart();
+				
+				//On demande à l'utilisateur s'il souhaite continuer ses achats
+				choice_continue = Functions.input_yes_no(scanner, "Voulez vous continuer vos achats? oui/non ");
+			}else {
+				System.out.println("ERREUR - Il n'y a plus de stock disponible pour ce produit : " + chooseProduct.getName());
+			}
 		}	
 		
 	}
@@ -142,9 +150,9 @@ public class AuBonMarche {
 	 * @param products
 	 */
 	public static void displayProductsStock(List<Product> products) {
-				
+		System.out.println("Produits en stock : ");
 		for (Product product : products) {			
-			System.out.println( product.getName() + " - " + product.getStockQuantity());
+			System.out.println( product.getName() + " : " + product.getStockQuantity() + " " + product.getUnite());
 		}
 	}
 	

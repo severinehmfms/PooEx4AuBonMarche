@@ -1,8 +1,7 @@
 package fr.aubonmarche;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.temporal.ChronoUnit;
 
 public class Fruit extends Product implements Consumable{
 		
@@ -16,7 +15,7 @@ public class Fruit extends Product implements Consumable{
 	public Fruit(String name, double unitPrice, String unite, double stockQuantity) {
 		super(name, unitPrice, unite, stockQuantity);
 		
-		//On ajoute le fruit à la liste des produits
+		//On ajoute le fruit au catalogue
 		super.addProductToList(this);
 	}
 	
@@ -32,10 +31,8 @@ public class Fruit extends Product implements Consumable{
 	public Fruit(String name, double unitPrice, String unite, int stockQuantity, LocalDate pickingDate, int shelfLifeDays) {
 		super(name, unitPrice, unite, stockQuantity, pickingDate, shelfLifeDays);
 		
-		//On ajoute le fruit à la liste des produits
+		//On ajoute le fruit au catalogue
 		super.addProductToList(this);
-		//super.products.add(this);
-		//super.nbProducts++;
 	}
 	
 	/**
@@ -51,8 +48,12 @@ public class Fruit extends Product implements Consumable{
 	 */
 	@Override
 	public LocalDate calculateExpirationDate() {
-		// TODO Auto-generated method stub
-		return null;
+		//Si la date de cueillette existe, on calcule la date de péremption
+		if (super.getPickingDate() != null) {
+		    return super.getPickingDate().plusDays(super.getShelfLifeDays());
+		} else {
+		    return null;
+		}
 	}
 
 	/**
@@ -70,8 +71,13 @@ public class Fruit extends Product implements Consumable{
 	 */
 	@Override
 	public boolean isRipe() {
-		//TODO Pour un fruit on part du principe que le lendemain de la cueillette il est mur...
-		
+		//Pour un fruit on part du principe que 2 jours après la cueillette il est mur...
+		//Je récupère la date de la cueillette et je rajoute 2 jours
+		LocalDate dateMur = super.getPickingDate().plusDays(2);
+		//Je regarde si la date obtenue est celle du jour ou après celle du jour si oui je renvoie true
+		if (!dateMur.isAfter(LocalDate.now())) {
+		    return true;
+		}
 		return false;
 	}
 
@@ -80,7 +86,10 @@ public class Fruit extends Product implements Consumable{
 	 */
 	@Override
 	public boolean isExpired(LocalDate dateVerification) {
-		// TODO Auto-generated method stub
+		//Je regarde si ma date d'expiration est avant la date du jour
+		if (calculateExpirationDate().isBefore(LocalDate.now())) {
+			return true;
+		}
 		return false;
 	}
 
@@ -89,8 +98,11 @@ public class Fruit extends Product implements Consumable{
 	 */
 	@Override
 	public long daysRemainingBeforeExpiration(LocalDate dateVerification) {
-		// TODO Auto-generated method stub
-		return 0;
+		//On retourne le nombre de jours entre aujourd'hui et la date calculée de péremption
+		return ChronoUnit.DAYS.between(
+		        LocalDate.now(),
+		        calculateExpirationDate()
+		    );
 	}
 	
 	

@@ -51,13 +51,20 @@ public class Cart {
 	}
 	
 	/**
-	 * Méthode qui ajoute un produit au panier
+	 * Méthode qui ajoute un produit au panier, ou modifie la quantité si ce produit est déjà dans le panier
 	 * @param product
 	 * @param quantity
 	 */
 	public void addProductToCart(Product product, double quantity) {
-		CartItem item= new CartItem(product, quantity);
-		items.add(item);
+		//Si le produit choisi existe déjà dans le panier, on modifie la quantité
+		for (CartItem item : items) {
+			if (item.getProduct().equals(product)) {
+	            item.setQuantity(item.getQuantity() + quantity);
+	            return;
+	        }
+	    }
+		//Sinon on ajoute un nouveau produit avec la quantité souhaitée
+		items.add(new CartItem(product, quantity));
 	}
 	
 	/**
@@ -71,6 +78,20 @@ public class Cart {
 			total += item.getSubTotalItem();
 		}
 		return total; 
+	}
+	
+	/**
+	 * Fonction qui retourne l'item correspondant à un produit précis (ou null si aucun item n'existe avec ce produit)
+	 * @param product
+	 * @return item
+	 */
+	public CartItem getItem(Product product) {
+	    for (CartItem item : items) {
+	        if (item.getProduct().equals(product)) {
+	            return item;
+	        }
+	    }
+	    return null;
 	}
 	
 	/**
@@ -89,14 +110,14 @@ public class Cart {
 	 * Méthode pour afficher le panier / la commande (suivant le statut)
 	 */
 	public void displayCart() {
-		System.out.println("--------------------------------------------------");
+		System.out.println("----------------------------------------------------------------------------------------------------");
 		if (this.getStatus().equals(CartStatus.IN_PROGRESS)) {
 			System.out.println("Panier pour " + customer.firstName + " " + customer.name + " en date du " + LocalDate.now());
 		}else {
 			System.out.println("Commande validée le " + LocalDate.now());
 		}
 		
-		System.out.println("--------------------------------------------------");
+		System.out.println("----------------------------------------------------------------------------------------------------");
 		String titleLine = String.format("%-20s %-20s %-20s %-20s %-20s %n", "Produit", "Nom", "Prix", "Quantité", "Sous total");
 		for (CartItem item : items) {
 			String lineCartStr = String.format("%-20s %-20s %-20s %-20s %-20s %n",
@@ -108,14 +129,8 @@ public class Cart {
 					);
 			System.out.print(lineCartStr);
 		}
-		String lineCartStr = String.format("%-20s %-20s %-20s %-20s %-20s %n",
-				"TOTAL",
-				"",
-				"",
-				"",
-				this.getTotal()
-				);
-		System.out.println("--------------------------------------------------");
+		System.out.println("TOTAL : " + this.getTotal());
+		System.out.println("----------------------------------------------------------------------------------------------------");
 	}
 	
 	/**
@@ -125,13 +140,21 @@ public class Cart {
 		if (this.getStatus().equals(CartStatus.IN_PROGRESS)) {
 			System.out.println("ERREUR - La commande n'a pas encore été validée, il n'est pas possible d'afficher le ticquet de caisse");
 		}else {
-			String ticket = "";
+			String ticket = "\n================ TICKET DE CAISSE ================\n";
 			for (CartItem item : items) {
-				ticket += item.getProduct().getName() + "-" + item.getProduct().getUnitPrice() + "/ " + item.getProduct().getUnite() 
-						+ item.getQuantity() + " = " + item.getSubTotalItem() + "\n";
+			    ticket += String.format(
+			    	"%-15s %-6.2f €/%-7s x %5.2f = %7.2f €%n", 
+			        item.getProduct().getName(),
+			        item.getProduct().getUnitPrice(),
+			        item.getProduct().getUnite(),
+			        item.getQuantity(),
+			        item.getSubTotalItem()
+			    );
 			}
-			ticket += "\nTotal : " + this.getTotal() + "\n";
-			System.out.print(ticket);			
+			ticket += "--------------------------------------------------\n";
+			ticket += String.format("%-25s %10.2f €%n", "TOTAL :", this.getTotal());
+			ticket += "==================================================\n";
+			System.out.print(ticket);
 		}
 	}
 	
