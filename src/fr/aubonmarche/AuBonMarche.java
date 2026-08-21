@@ -45,30 +45,15 @@ public class AuBonMarche {
 			switch(choice_user) {
 				case 1:				
 					//Choix des produits
-					if (myCart.getStatus().equals(Cart.CartStatus.VALIDATED)) {
-						System.out.println("ERREUR - La commande a été validée, il n'est plus possible de rajouter des produits");
-					}else {
-						choiceProducts(myCart);
-					}
+					choiceProducts(myCart);
 					break;
 				case 2:
-					if (myCart.getStatus().equals(Cart.CartStatus.VALIDATED)) {
-						System.out.println("Affichage de ma commande");
-					}else {
-						System.out.println("Affichage du panier");
-					}
+					//Affichage du panier / de la commande
 					myCart.displayCart();
 					break;
 				case 3:	
-					if (myCart.getStatus().equals(Cart.CartStatus.VALIDATED)) {
-						System.out.println("ERREUR - La commande a déjà été validée, il n'est pas possible de la valider plusieurs fois");
-					}else {
-						//Validation du panier et commande
-						myCart.validCart();
-						System.out.println("Votre commande a bien été effectuée. Le stock a été mis à jour. Voici votre ticquet de caisse : ");
-						//Affichage du ticket de caisse après la commande
-						myCart.displayTicket();
-					}
+					//Validation du panier et commande
+					myCart.validCart();
 					break;
 				case 4:	
 					//Affichage des produits en stock
@@ -94,6 +79,10 @@ public class AuBonMarche {
 	 * @param myCart
 	 */
 	public static void choiceProducts(Cart myCart) {
+		if (myCart.getStatus().equals(Cart.CartStatus.VALIDATED)) {
+			System.out.println("ERREUR - La commande a été validée, il n'est plus possible de rajouter des produits");
+			return;
+		}
 		System.out.println("Liste des produits disponibles");
 		boolean choice_continue = true;
 		
@@ -160,9 +149,21 @@ public class AuBonMarche {
 	 * @param products
 	 */
 	public static void displayProductsStock(List<Product> products) {
-		System.out.println("Produits en stock : ");
-		for (Product product : products) {			
-			System.out.println( product.getName() + " : " + product.getStockQuantity() + " " + product.getUnite());
+		System.out.println("\nProduits en stock :");
+		System.out.println("--------------------------------------------------------");
+		System.out.printf("%-25s %-10s %s%n", "Produit", "Quantité", "Unité");
+		System.out.println("--------------------------------------------------------");
+
+		for (Product product : products) {
+
+		    String quantity = product.getUnite().equals("kg")
+		            ? String.format("%.2f", product.getStockQuantity())
+		            : String.format("%.0f", product.getStockQuantity());
+
+		    System.out.printf("%-25s %-10s %s%n",
+		            product.getName(),
+		            quantity,
+		            product.getUnite());
 		}
 	}
 	
@@ -199,8 +200,10 @@ public class AuBonMarche {
 	public static void displayProductsPerimesDateCible() {
 		//On demande à l'utilisateur de saisir une date
 		LocalDate dateCible = Functions.input_date_fr(scanner, "Merci de saisir une date au format dd/MM/yyyy");
-		System.out.println("Produits qui seront périmés à la date du " + dateCible.format(FRENCH_DATE_FORMAT) + " : ");
-		System.out.print(String.format("%-20s %-20s %-20s %-20s %n", "Produit", "Nom", "Quantité", "Nombre de jours restants avant péremption"));
+		System.out.println("\nProduits qui seront périmés à la date du " + dateCible.format(FRENCH_DATE_FORMAT) + " : ");
+		System.out.println("----------------------------------------------------------------------------------------------------");
+		System.out.print(String.format("%-20s %-20s %-20s %-20s %n", "Produit", "Nom", "Quantité", "Nb de jours restants avant péremption"));
+		System.out.println("----------------------------------------------------------------------------------------------------");
 		for (Product product : Product.getProducts()) {
 			
 			//La classe Product n'implémente pas la méthode isExpired, donc ça ne fonctionne pas, il faut que je vérifie que mon produit

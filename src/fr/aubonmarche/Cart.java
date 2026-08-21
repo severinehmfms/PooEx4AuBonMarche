@@ -83,20 +83,33 @@ public class Cart {
 	 * Méthode qui valide la commande (Mise à jour du stock des produits, et validation du statut)
 	 */
 	public void validCart() {
+		if (getStatus().equals(Cart.CartStatus.VALIDATED)) {
+			System.out.println("ERREUR - La commande a déjà été validée, il n'est pas possible de la valider plusieurs fois");
+			return;
+		}
 		//Pour chaque item du panier on met à jour le stock du produit
 		for (CartItem item : items) {
 			item.getProduct().updateStock(item.getQuantity());
 		}
 		//On passe la commande au statut validée
 		status = CartStatus.VALIDATED;
+		
+		System.out.println("Votre commande a bien été effectuée. Le stock a été mis à jour. Voici votre ticquet de caisse : ");
+		//Affichage du ticket de caisse après la commande
+		displayTicket();
 	}
 	
 	/**
 	 * Méthode pour afficher le panier / la commande (suivant le statut)
 	 */
 	public void displayCart() {
+		if (getStatus().equals(Cart.CartStatus.VALIDATED)) {
+			System.out.println("Affichage de ma commande");
+		}else {
+			System.out.println("Affichage de mon panier");
+		}
 		System.out.println("----------------------------------------------------------------------------------------------------");
-		if (this.getStatus().equals(CartStatus.IN_PROGRESS)) {
+		if (getStatus().equals(CartStatus.IN_PROGRESS)) {
 			System.out.println("Panier pour " + customer.firstName + " " + customer.name + " en date du " + LocalDate.now());
 		}else {
 			System.out.println("Commande validée le " + LocalDate.now());
@@ -106,16 +119,21 @@ public class Cart {
 		String titleLine = String.format("%-20s %-20s %-20s %-20s %-20s %n", "Produit", "Nom", "Prix", "Quantité", "Sous total");
 		System.out.println(titleLine);
 		for (CartItem item : items) {
-			String lineCartStr = String.format("%-20s %-20s %-20s %-20s %-20s %n",
+			//Gérer la quantité si int ou double...
+			String lineCartStr = String.format("%-20s %-20s %-20s %-20s %-20.2f %n",
 					(item.getProduct() instanceof Fruit ? "Fruit": "Légume"),
 					item.getProduct().getName(),
-					item.getProduct().getUnitPrice() + "/ " + item.getProduct().getUnite(),
+					
+					String.format("%.2f / %s",
+			                item.getProduct().getUnitPrice(),
+			                item.getProduct().getUnite()),
+			        
 					item.getQuantity(),
 					item.getSubTotalItem()
 					);
 			System.out.print(lineCartStr);
 		}
-		System.out.println("TOTAL : " + this.getTotal());
+		System.out.printf("TOTAL : %.2f%n", this.getTotal());
 		System.out.println("----------------------------------------------------------------------------------------------------");
 	}
 	
@@ -126,7 +144,7 @@ public class Cart {
 		if (this.getStatus().equals(CartStatus.IN_PROGRESS)) {
 			System.out.println("ERREUR - La commande n'a pas encore été validée, il n'est pas possible d'afficher le ticquet de caisse");
 		}else {
-			String ticket = "\n================ TICKET DE CAISSE ================\n";
+			String ticket = "\n================== TICKET DE CAISSE ==================\n";
 			for (CartItem item : items) {
 			    ticket += String.format(
 			    	"%-15s %-6.2f €/%-7s x %5.2f = %7.2f €%n", 
@@ -137,9 +155,9 @@ public class Cart {
 			        item.getSubTotalItem()
 			    );
 			}
-			ticket += "--------------------------------------------------\n";
+			ticket += "------------------------------------------------------\n";
 			ticket += String.format("%-25s %10.2f €%n", "TOTAL :", this.getTotal());
-			ticket += "==================================================\n";
+			ticket += "======================================================\n";
 			System.out.print(ticket);
 		}
 	}
