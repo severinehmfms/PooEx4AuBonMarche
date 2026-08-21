@@ -103,18 +103,12 @@ public class Cart {
 	 * Méthode pour afficher le panier / la commande (suivant le statut)
 	 */
 	public void displayCart() {
-		if (getStatus().equals(Cart.CartStatus.VALIDATED)) {
-			System.out.println("Affichage de ma commande");
-		}else {
-			System.out.println("Affichage de mon panier");
-		}
 		System.out.println("----------------------------------------------------------------------------------------------------");
-		if (getStatus().equals(CartStatus.IN_PROGRESS)) {
-			System.out.println("Panier pour " + customer.firstName + " " + customer.name + " en date du " + LocalDate.now());
-		}else {
+		if (getStatus().equals(Cart.CartStatus.VALIDATED)) {
 			System.out.println("Commande validée le " + LocalDate.now());
+		}else {
+			System.out.println("Panier de " + customer.firstName + " " + customer.name + " en date du " + LocalDate.now());
 		}
-		
 		System.out.println("----------------------------------------------------------------------------------------------------");
 		String titleLine = String.format("%-20s %-20s %-20s %-20s %-20s %n", "Produit", "Nom", "Prix", "Quantité", "Sous total");
 		System.out.println(titleLine);
